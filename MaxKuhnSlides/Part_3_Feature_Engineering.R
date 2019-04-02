@@ -60,7 +60,7 @@ bivariate_rec <- recipe(Class ~ PredictorA + PredictorB,
 
 bivariate_rec <- prep(bivariate_rec, training = bivariate_data_train, verbose = FALSE)
 
-inverse_test <- bake(bivariate_rec, newdata = bivariate_data_test, everything())
+inverse_test <- bake(bivariate_rec, new_data = bivariate_data_test)
 
 ggplot(inverse_test, 
        aes(x = 1/PredictorA, 
@@ -257,9 +257,9 @@ glance(cv_splits$fits[[1]])
 
 assess_predictions <- function(split_obj, rec_obj, mod_obj) {
   raw_data <- assessment(split_obj)
-  proc_x <- bake(rec_obj, newdata = raw_data, all_predictors())
+  proc_x <- bake(rec_obj, new_data = raw_data, all_predictors())
   # Now save _all_ of the columns and add predictions. 
-  bake(rec_obj, newdata = raw_data, everything()) %>%
+  bake(rec_obj, new_data = raw_data) %>%
     mutate(
       .fitted = predict(mod_obj, newdata = proc_x),
       .resid = Sale_Price - .fitted,  # Sale_Price is already logged by the recipe
@@ -285,7 +285,8 @@ library(yardstick)
 
 # Compute the summary statistics
 map_df(cv_splits$pred, metrics, truth = Sale_Price, estimate = .fitted) %>% 
-  colMeans
+  group_by(.metric) %>%
+  summarize(est_mean = mean(.estimate))
 
  # Slide 33
 

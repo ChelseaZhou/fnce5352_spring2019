@@ -50,6 +50,7 @@ ggplot(ames,
 
 library(purrr)
 
+
 # summarize via purrr::map
 by_alley <- split(ames, ames$Alley)
 is_list(by_alley)

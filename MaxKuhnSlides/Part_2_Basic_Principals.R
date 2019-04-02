@@ -105,10 +105,13 @@ model_perf <- function(data_split, mod_obj) {
   	)
   
   rmse <- assess_dat %>% 
-  	rmse(truth = Sale_Price, estimate = pred)
+  	rmse(truth = Sale_Price, estimate = pred) 
   rsq <- assess_dat %>% 
-  	rsq(truth = Sale_Price, estimate = pred)
-  data.frame(rmse = rmse, rsq = rsq)
+  	rsq(truth = Sale_Price, estimate = pred) 
+  #data.frame(rmse = rmse, rsq = rsq)
+  rbind(rmse, rsq) %>% 
+    spread(.metric, value = .estimate) %>%
+    select(rmse, rsq)
 }
 
 # Slide 31
@@ -171,7 +174,7 @@ knn_res <- map2_df(cv_splits$splits, cv_splits$knn_mod, model_perf) %>%
 ## Merge in results:
 cv_splits <- cv_splits %>% bind_cols(knn_res)
 
-colMeans(knn_res)
+colMeans(knn_res %>% select(rmse_knn, rsq_knn))
 
 # Slide 42
 
