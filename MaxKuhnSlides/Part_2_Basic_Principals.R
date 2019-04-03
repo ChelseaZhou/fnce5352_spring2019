@@ -73,7 +73,11 @@ cv_splits
 # Slide 29
 
 # The `split` objects contain the information about the sample sizes
-cv_splits$splits[[1]]
+cv_splits$splits[[1]] %>% class
+cv_splits$splits[1] %>% class
+
+
+
 
 # Use the `analysis` and `assessment` functions to get the data
 analysis(cv_splits$splits[[1]]) %>% dim()
@@ -144,6 +148,9 @@ holdout_results <- map2_df(cv_splits$splits, cv_splits$lm_mod, get_assessment)
 holdout_results %>% dim()
 ames_train %>% dim()
 
+holdout_results %>% ggplot(aes(y=.resid, x=factor(Full_Bath))) + geom_boxplot()
+holdout_results %>% ggplot(aes(y=.resid, x=Gr_Liv_Area)) + geom_point() + stat_smooth()
+
 # Slide 39
 
 library(caret)
@@ -203,7 +210,7 @@ knn_rmse <- function(k, split) {
 	preds <- form_pred(mod$terms)
 	data.frame(Sale_Price = log10(assessment(split)$Sale_Price)) %>%
 		mutate(pred = predict(mod, assessment(split) %>% select(!!!preds))) %>%
-		rmse(Sale_Price, pred)
+		rmse(Sale_Price, pred) %>% select(.estimate) %>% pull
 }
 
 # Slide 50
@@ -228,7 +235,7 @@ iter_over_resamples <-
 
 # Slide 52
 
-knn_tune_res <- iter_over_resamples(cv_splits)
+  knn_tune_res <- iter_over_resamples(cv_splits)
 knn_tune_res %>% head(15)
 
 # Slide 53
