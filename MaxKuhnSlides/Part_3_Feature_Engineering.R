@@ -133,7 +133,7 @@ mod_rec_trained
 
 # Slide 16
 
-ames_test_dummies <- bake(mod_rec_trained,newdata = ames_test)
+ames_test_dummies <- bake(mod_rec_trained,new_data = ames_test)
 names(ames_test_dummies)
 
 # slide 17
@@ -251,7 +251,7 @@ lm_fit_rec <- function(rec_obj, ...)
 
 cv_splits <- cv_splits %>% 
   mutate(fits = map(coords, lm_fit_rec, Sale_Price ~ .))
-glance(cv_splits$fits[[1]])
+broom::glance(cv_splits$fits[[1]])
 
 # Slide 30
 
@@ -299,3 +299,4 @@ ggplot(assess_pred,
   geom_abline(lty = 2) + 
   geom_point(alpha = .4)  + 
   geom_smooth(se = FALSE, col = "red")
+
